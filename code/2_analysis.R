@@ -11,8 +11,8 @@ test_dataset$cp  <- relevel(factor(test_dataset$cp),  ref = 4)
 train_dataset$ecg <- relevel(factor(train_dataset$ecg), ref = "0")
 test_dataset$ecg  <- relevel(factor(test_dataset$ecg),  ref = "0")
 
-#summary(train_dataset)
-#summary(test_dataset)
+summary(train_dataset)
+summary(test_dataset)
 #
 # extract names and indices of new markers ####
 ref_vars <- c("sex", "age", "bp", "chol")
@@ -96,13 +96,13 @@ results_rbi_test_corr <-  calculate.rbi(probs_test_corr)
 # U-smile plots
 rbi_for_usmile_train_corr <- prepare.rbi.for.usmile(results_rbi_train_corr, new_vars_corr, new_vars_index_corr, comparisons_train_corr)
 usmile_train_corr <- plot.usmile(rbi_for_usmile_train_corr, results_rbi_train_corr, results_rbi_test_corr, "U-smile plots (training dataset)")
-#grid.newpage()
-#grid.draw(usmile_train_corr)
+grid.newpage()
+grid.draw(usmile_train_corr)
 
 rbi_for_usmile_test_corr <- prepare.rbi.for.usmile(results_rbi_test_corr, new_vars_corr, new_vars_index_corr, comparisons_train_corr)
 usmile_test_corr <- plot.usmile(rbi_for_usmile_test_corr, results_rbi_train_corr, results_rbi_test_corr, "U-smile plots (test dataset)")
-#grid.newpage()
-#grid.draw(usmile_test_corr)
+grid.newpage()
+grid.draw(usmile_test_corr)
 
 # combine U-smile plots 
 a <- ggarrange(usmile_train_corr, usmile_test_corr, ncol=1, nrow=2)
@@ -113,10 +113,6 @@ grid.draw(a)
 plot.roc(ROC_ref, ROC_new_corr, new_vars_index_corr, comparisons_train_corr, title="ROC curves (training dataset)")
 plot.roc(ROC_ref_test, ROC_new_test_corr, new_vars_index_corr, comparisons_train_corr, title="ROC curves (test dataset)")
 
-
 # PIW plots 
 plot.piw(probs_train_corr, new_vars_index_corr, comparisons_train_corr, title="PIW plots (training dataset)")
 plot.piw(probs_test_corr, new_vars_index_corr, comparisons_train_corr, title="PIW plots (test dataset)")
-
-
-

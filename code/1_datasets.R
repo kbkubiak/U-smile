@@ -1,4 +1,4 @@
-# read my functions ####
+# packages ####
 source('code/0_packages.R')
 #
 ## create training and test datasets ##
@@ -52,7 +52,7 @@ raw_data <- rbind(raw_cl,
                   raw_va)
 
 colnames(raw_data) <- colnames
-#summary(raw_data)
+summary(raw_data)
 
 disease <- ifelse(raw_data$num == 0, 0, 1)
 raw_data <- cbind(disease, raw_data)
@@ -63,17 +63,17 @@ sapply(raw_data, function(x) round(sum(is.na(x)) / length(x) * 100, 1))
 raw_data <- select(raw_data, -slope, -ca, -thal, -num)
 
 raw_data <- na.omit(raw_data)
-#summary(raw_data) # bp and chol = 0 - must be removed
+summary(raw_data) # bp and chol = 0 - must be removed
 
 raw_data <- raw_data[-c(which(raw_data$bp == 0), which(raw_data$chol == 0)),]
 summary(raw_data)
 #
-# generate rnd variables ####
+# generate random variables ####
 n <- nrow(raw_data)
 n0 <- sum(raw_data$disease == 0)
 n1 <- sum(raw_data$disease == 1)
 
-# generate independent vars
+# generate independent variables
 set.seed(101808)
 
 rnd_normal   <- rnorm(n)
@@ -103,8 +103,8 @@ raw_data_rnd <- cbind(raw_data,
                       strat_rnd_binomial,
                       strat_rnd_poisson)
 
-set.seed(5717383)
-# correlated rnd vars
+set.seed(1187573)
+# correlated random variables
 raw_data_rnd$rnd_normal0_1 <- rnorm_pre(raw_data_rnd$age, mu = 0, sd = 1, r = 0.1)
 raw_data_rnd$rnd_normal0_2 <- rnorm_pre(raw_data_rnd$age, mu = 0, sd = 1, r = 0.2)
 raw_data_rnd$rnd_normal0_3 <- rnorm_pre(raw_data_rnd$age, mu = 0, sd = 1, r = 0.3)
@@ -115,7 +115,7 @@ raw_data_rnd$rnd_normal0_7 <- rnorm_pre(raw_data_rnd$age, mu = 0, sd = 1, r = 0.
 raw_data_rnd$rnd_normal0_8 <- rnorm_pre(raw_data_rnd$age, mu = 0, sd = 1, r = 0.8)
 raw_data_rnd$rnd_normal0_9 <- rnorm_pre(raw_data_rnd$age, mu = 0, sd = 1, r = 0.9)
 
-# correlated vars for nonevents 
+# correlated random variables for nonevents 
 raw_data_rnd %>% filter(disease == 0) %>% 
   mutate(strat_rnd_normal0_1=rnorm_pre(age, mu = 10, sd = 2.5, r = 0.1),
          strat_rnd_normal0_2=rnorm_pre(age, mu = 10, sd = 2.5, r = 0.2),
@@ -128,7 +128,7 @@ raw_data_rnd %>% filter(disease == 0) %>%
          strat_rnd_normal0_9=rnorm_pre(age, mu = 10, sd = 2.5, r = 0.9)) -> raw_data_rnd_nonev
 
 
-# correlated vars for events
+# correlated random variables for events
 raw_data_rnd %>% filter(disease == 1) %>% 
   mutate(strat_rnd_normal0_1=rnorm_pre(age, mu = 11, sd = 2.5, r = 0.1),
          strat_rnd_normal0_2=rnorm_pre(age, mu = 11, sd = 2.5, r = 0.2),
@@ -146,7 +146,7 @@ summary(raw_data_rnd)
 
 write_xlsx(raw_data_rnd, 'data/raw_data_rnd.xlsx')
 
-# divide into training and test datasets ####
+# divide raw dataset into training and test datasets ####
 table(raw_data$location,
       raw_data$disease)
 train_table <- round(table(raw_data$location,
